@@ -1,4 +1,3 @@
-const Discord = require("discord.js");
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { Bot } = require("./adb/index");
 const cfg = require("./config.json");
