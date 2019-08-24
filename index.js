@@ -188,11 +188,7 @@ bot.client.on("message", message => {
       commandchannel.send("PONG");
     } else if (message.content === "ping") {
       commandchannel.send("pong");
-    } else if (
-      message.content === "owo" ||
-      message.content === "OwO" ||
-      message.content === "OWO"
-    ) {
+    } else if (message.content.toLocaleLowerCase() === "owo") {
       commandchannel.send("What's this?");
     }
   }
@@ -260,13 +256,7 @@ function gameParse(game, meme) {
   var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
   d.setUTCSeconds(utcSeconds);
 
-  return `${champName}\n\`\`\`md\n# ${player}\n\n* ${
-    game.gameMode
-  }\n* ${d}\n\n${finalt}\n\n< K >\t${
-    game.participants[pId].stats.kills
-  }\n< D >\t${game.participants[pId].stats.deaths}\n< A >\t${
-    game.participants[pId].stats.assists
-  }\`\`\``;
+  return `${champName}\n\`\`\`md\n# ${player}\n\n* ${game.gameMode}\n* ${d}\n\n${finalt}\n\n< K >\t${game.participants[pId].stats.kills}\n< D >\t${game.participants[pId].stats.deaths}\n< A >\t${game.participants[pId].stats.assists}\`\`\``;
 }
 
 function getPosition(string, subString, index) {
