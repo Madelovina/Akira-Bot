@@ -161,7 +161,8 @@ bot.registerCommand({
 
 bot.registerCommand({
     name: "academy",
-    description: "new, fileId, update",
+    description:
+        "new [First] [Last], fileId, update, share [First] [Last] [Email], returnId [First] [Last], addToMaster",
     handler: (message, args) => {
         if (message.channel.id == "678102017226309644") {
             if (args[0] == "new") {
@@ -169,7 +170,13 @@ bot.registerCommand({
                 var lastName = args[2];
                 try {
                     newCopy(firstName + " " + lastName);
-                    return message.reply("Added " + firstName + " " + lastName);
+                    return message.reply(
+                        "Added " +
+                            firstName +
+                            " " +
+                            lastName +
+                            ". Don't forget to share it! "
+                    );
                 } catch (e) {
                     return message.reply(
                         "Could not add " + firstName + " " + lastName
@@ -185,7 +192,25 @@ bot.registerCommand({
                 return message.reply("Printed IDs to console. ");
             } else if (args[0] == "update") {
                 updateId();
-                return "Updated IDs. ";
+                return message.reply("Updated IDs. ");
+            } else if (args[0] == "share") {
+                // br0ke
+                shareFile(
+                    fileId[`${args[1]} ${args[2]} Accounting Sheet`],
+                    args[3]
+                );
+                return message.reply("Shared to " + args[3]);
+            } else if (args[0] == "returnId") {
+                return message.reply(
+                    args[1] +
+                        " " +
+                        args[2] +
+                        "'s Spreadsheet ID is: " +
+                        fileId[`${args[1]} ${args[2]} Accounting Sheet`]
+                );
+            } else if (args[0] == "addToMaster") {
+                addToMaster(/*fileId[`${args[1]} ${args[2]} Accounting Sheet`]*/);
+                return "Add to master!";
             }
         } else {
             return message.reply("You don't have perms dumbass...");
@@ -335,4 +360,23 @@ function updateId() {
             }
         }
     );
+}
+
+function shareFile(id, email) {
+    gdapi.permissions.create({
+        fileId: id,
+        resource: {
+            role: "reader",
+            type: "user",
+            emailAddress: email
+        }
+    });
+}
+
+function addToMaster() {
+    gsapi.spreadsheets.values.append({
+        spreadsheetId: "10T8oLOKDj-C6Y4sGdfjxm-84qxikrKNv5hfByF8Cx-4",
+        range: "Sheet1!A:B",
+        values: ["hi", "hello"]
+    });
 }
