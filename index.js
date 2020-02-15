@@ -209,8 +209,8 @@ bot.registerCommand({
                         fileId[`${args[1]} ${args[2]} Accounting Sheet`]
                 );
             } else if (args[0] == "addToMaster") {
-                addToMaster(/*fileId[`${args[1]} ${args[2]} Accounting Sheet`]*/);
-                return message.reply("Add to master!");
+                addToMaster();
+                return message.reply("Refreshed master!");
             }
         } else {
             return message.reply("You don't have perms dumbass...");
@@ -329,15 +329,16 @@ function getPosition(string, subString, index) {
     return string.split(subString, index).join(subString).length;
 }
 
-function newCopy(name) {
+async function newCopy(name) {
     var body = {
         name: `${name} Accounting Sheet`,
         parents: [`${fileId[name.charAt(0)]}`]
     };
-    gdapi.files.copy({
+    let ph = await gdapi.files.copy({
         fileId: `${fileId["Example Accounting Sheet"]}`,
         resource: body
     });
+    addToMaster();
 }
 
 function updateId() {
@@ -362,8 +363,8 @@ function updateId() {
     );
 }
 
-function shareFile(id, email) {
-    gdapi.permissions.create({
+async function shareFile(id, email) {
+    let ph = await gdapi.permissions.create({
         fileId: id,
         resource: {
             role: "reader",
