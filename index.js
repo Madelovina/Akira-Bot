@@ -162,7 +162,7 @@ bot.registerCommand({
 bot.registerCommand({
     name: "academy",
     description:
-        "new [First] [Last], fileId, update, share [First] [Last] [Email], returnId [First] [Last], addToMaster",
+        "new [First] [Last], fileId, update, share [First] [Last] [Email], returnId [First] [Last], refreshMaster",
     handler: (message, args) => {
         if (message.channel.id == "678102017226309644") {
             if (args[0] == "new") {
@@ -208,7 +208,7 @@ bot.registerCommand({
                         "'s Spreadsheet ID is: " +
                         fileId[`${args[1]} ${args[2]} Accounting Sheet`]
                 );
-            } else if (args[0] == "addToMaster") {
+            } else if (args[0] == "refreshMaster") {
                 addToMaster();
                 return message.reply("Refreshed master!");
             }
