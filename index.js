@@ -210,7 +210,7 @@ bot.registerCommand({
                 );
             } else if (args[0] == "addToMaster") {
                 addToMaster(/*fileId[`${args[1]} ${args[2]} Accounting Sheet`]*/);
-                return "Add to master!";
+                return message.reply("Add to master!");
             }
         } else {
             return message.reply("You don't have perms dumbass...");
@@ -373,10 +373,43 @@ function shareFile(id, email) {
     });
 }
 
-function addToMaster() {
-    gsapi.spreadsheets.values.append({
+async function addToMaster() {
+    const opt = {
         spreadsheetId: "10T8oLOKDj-C6Y4sGdfjxm-84qxikrKNv5hfByF8Cx-4",
-        range: "Sheet1!A:B",
-        values: ["hi", "hello"]
-    });
+        range: "Sheet1!A2:B"
+    };
+
+    const values = await gsapi.spreadsheets.values.get(opt);
+    console.log(values.data.values + "\n" + values.data.values.length);
+
+    let dataArray = values.data.values;
+    let newDataArray = [];
+    for (var i = 0; i < dataArray.length; i++) {
+        var name = dataArray[i][0];
+        if (name.charAt(name.length - 1) == " ")
+            name = name.substring(0, name.length - 1);
+        console.log(name);
+        var cellData = [
+            '=IMPORTRANGE("https://docs.google.com/spreadsheets/d/' +
+                fileId[`${name} Accounting Sheet`] +
+                '/","A2:A2")'
+        ];
+        if (cellData[0].includes("undefined")) {
+            newDataArray.push(["0"]);
+        } else {
+            newDataArray.push(cellData);
+        }
+    }
+    console.log(newDataArray);
+
+    const updateOptions = {
+        spreadsheetId: "10T8oLOKDj-C6Y4sGdfjxm-84qxikrKNv5hfByF8Cx-4",
+        range: "Sheet1!B2:B",
+        valueInputOption: "USER_ENTERED",
+        resource: {
+            values: newDataArray
+        }
+    };
+
+    let response = await gsapi.spreadsheets.values.update(updateOptions);
 }
