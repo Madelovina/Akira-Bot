@@ -474,6 +474,9 @@ async function changeValue(fn, ln, monies, reason, note) {
         newMoney = parseFloat(prevFinal) * 2;
     } else newMoney = parseFloat(prevFinal) + parseFloat(monies);
 
+    monies = Math.floor(parseFloat(monies) + 1);
+    newMoney = Math.floor(parseFloat(newMoney) + 1);
+
     dataArray.push([prevFinal, monies, reason, newMoney, note]);
 
     const updateOptions = {
