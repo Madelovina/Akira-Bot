@@ -4,6 +4,7 @@ const cfg = require("./config.json");
 const secret = require("./secret.json");
 const bot = new Bot("a!");
 
+var md5 = require("md5");
 const { google } = require("googleapis");
 const keys = require("./keys.json");
 
@@ -162,7 +163,7 @@ bot.registerCommand({
 bot.registerCommand({
     name: "academy",
     description:
-        "new [First] [Last], fileId, update, share [First] [Last] [Email], returnId [First] [Last], refreshMaster",
+        "new [First] [Last], fileId, update, share [First] [Last] [Email], returnId [First] [Last], refreshMaster, money [First] [Last] [Balance Change] [Reason]",
     handler: (message, args) => {
         if (message.channel.id == "678102017226309644") {
             if (args[0] == "new") {
@@ -211,6 +212,43 @@ bot.registerCommand({
             } else if (args[0] == "refreshMaster") {
                 addToMaster();
                 return message.reply("Refreshed master!");
+            } else if (args[0] == "manualBalanceChange") {
+                var reason = "";
+                for (var i = 4; i < args.length; i++) {
+                    reason += args[i] + " ";
+                }
+                changeValue(args[1], args[2], args[3], reason, "Manual Update");
+                return message.reply(
+                    "Balance change of " +
+                        args[3] +
+                        " applied to " +
+                        args[1] +
+                        " " +
+                        args[2]
+                );
+            } else if (args[0] == "gambit") {
+                const roll = Math.floor(Math.random() * 1000000000000);
+                let money = "";
+                if (roll <= 99999999999) money = "*2";
+                else if (roll <= 249999999999) money = "1000";
+                else if (roll <= 499999999999) money = "500";
+                else money = "/2";
+                changeValue(
+                    args[1],
+                    args[2],
+                    money,
+                    "Gambit",
+                    "hash: " + md5(roll)
+                );
+                return message.reply(
+                    "Gambit resulted in a change of " +
+                        money +
+                        " to " +
+                        args[1] +
+                        " " +
+                        args[2] +
+                        "'s balance"
+                );
             }
         } else {
             return message.reply("You don't have perms dumbass...");
@@ -389,7 +427,6 @@ async function addToMaster() {
         var name = dataArray[i][0];
         if (name.charAt(name.length - 1) == " ")
             name = name.substring(0, name.length - 1);
-        console.log(name);
         var cellData = [
             '=IMPORTRANGE("https://docs.google.com/spreadsheets/d/' +
                 fileId[`${name} Accounting Sheet`] +
@@ -401,7 +438,6 @@ async function addToMaster() {
             newDataArray.push(cellData);
         }
     }
-    console.log(newDataArray);
 
     const updateOptions = {
         spreadsheetId: "10T8oLOKDj-C6Y4sGdfjxm-84qxikrKNv5hfByF8Cx-4",
@@ -413,4 +449,50 @@ async function addToMaster() {
     };
 
     let response = await gsapi.spreadsheets.values.update(updateOptions);
+}
+
+async function changeValue(fn, ln, monies, reason, note) {
+    sheetId = fileId[`${fn} ${ln} Accounting Sheet`];
+    const opt = {
+        spreadsheetId: sheetId,
+        range: "Sheet1!C2:G"
+    };
+    let history = await gsapi.spreadsheets.values.get(opt);
+    let dataArray = history.data.values;
+
+    const prevFinal =
+        dataArray[dataArray.length - 1][
+            dataArray[dataArray.length - 1].length - 2
+        ];
+
+    let newMoney;
+    if (monies == "/2") {
+        monies = "-" + parseFloat(prevFinal) / 2;
+        newMoney = parseFloat(prevFinal) / 2;
+    } else if (monies == "*2") {
+        monies = parseFloat(prevFinal);
+        newMoney = parseFloat(prevFinal) * 2;
+    } else newMoney = parseFloat(prevFinal) + parseFloat(monies);
+
+    dataArray.push([prevFinal, monies, reason, newMoney, note]);
+
+    const updateOptions = {
+        spreadsheetId: sheetId,
+        range: "Sheet1!C2:G",
+        valueInputOption: "USER_ENTERED",
+        resource: {
+            values: dataArray
+        }
+    };
+    let response = await gsapi.spreadsheets.values.update(updateOptions);
+
+    const totalOptions = {
+        spreadsheetId: sheetId,
+        range: "Sheet1!A2:A2",
+        valueInputOption: "USER_ENTERED",
+        resource: {
+            values: [[newMoney]]
+        }
+    };
+    let response2 = await gsapi.spreadsheets.values.update(totalOptions);
 }
