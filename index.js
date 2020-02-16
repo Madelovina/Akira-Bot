@@ -163,7 +163,8 @@ bot.registerCommand({
 bot.registerCommand({
     name: "academy",
     description:
-        "new [First] [Last], fileId, update, share [First] [Last] [Email], returnId [First] [Last], refreshMaster, money [First] [Last] [Balance Change] [Reason]",
+        "new [First] [Last]\n\t\t\t fileId\n\t\t\t update\n\t\t\t share [First] [Last] [Email]\n\t\t\t returnId [First] [Last]\n\t\t\t " +
+        "refreshMaster\n\t\t\t manualBalanceChange [First] [Last] [Balance Change] [Reason]\n\t\t\t gambit [First] [Last]",
     handler: (message, args) => {
         if (message.channel.id == "678102017226309644") {
             if (args[0] == "new") {
@@ -189,7 +190,6 @@ bot.registerCommand({
                 for (var i = 0; i < fileIdKeys.length; i++) {
                     msg += fileIdKeys[i] + " : " + fileId[fileIdKeys[i]] + "\n";
                 }
-                console.log(msg);
                 return message.reply("Printed IDs to console. ");
             } else if (args[0] == "update") {
                 updateId();
@@ -419,7 +419,6 @@ async function addToMaster() {
     };
 
     const values = await gsapi.spreadsheets.values.get(opt);
-    console.log(values.data.values + "\n" + values.data.values.length);
 
     let dataArray = values.data.values;
     let newDataArray = [];
