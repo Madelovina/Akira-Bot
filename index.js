@@ -38,12 +38,6 @@ updateId(gdapi);
 
 bot.client.login(secret.discord.token); // Starts the bot.
 
-bot.client.on("message", message => {
-    if (message.channel.id == cfg.abbchan && message.content == "hello sir") {
-        chan.send("ey wudup");
-    }
-});
-
 bot.registerCommand({
     name: "tg",
     description: "Sends a Tokyo Ghoul GIF",
@@ -137,34 +131,10 @@ bot.registerCommand({
 });
 
 bot.registerCommand({
-    name: "tft",
-    description: "TFT Teams: Alex, Yak, Pirates, BVoid",
-    handler: (message, args) => {
-        if (args[0] == "Alex") {
-            return message.reply(
-                "```md\n# Alex\n\n* Ahri\n* Lulu\n* Kassadin\n* Cho'Gath\n* Rek'Sai\n* Warwick\n* Blitzcrank\n```"
-            );
-        } else if (args[0] == "Yak") {
-            return message.reply(
-                "```md\n# Yak\n\n* Ashe\n* Kindred\n* Varus\n* Vayne\n* Braum\n* Leona\n* Mordekaiser\n```"
-            );
-        } else if (args[0] == "Pirates") {
-            return message.reply(
-                "```md\n# Pirates\n\n* Graves\n* Gangplank\n* Tristana\n* Camille\n* Miss Fortune\n* Jinx\n* Lucian\n```"
-            );
-        } else if (args[0] == "BVoid") {
-            return message.reply(
-                "```md\n# BVoid\n\n* Kassadin\n* Blitzcrank\n* Lucian\n* Rek'Sai\n* Vi\n* Cho'Gath\n* Jinx\n```"
-            );
-        }
-    }
-});
-
-bot.registerCommand({
     name: "academy",
     description:
         "new [First] [Last]\n\t\t\t fileId\n\t\t\t update\n\t\t\t share [First] [Last] [Email]\n\t\t\t returnId [First] [Last]\n\t\t\t " +
-        "refreshMaster\n\t\t\t manualBalanceChange [First] [Last] [Balance Change] [Reason]\n\t\t\t gambit [First] [Last]",
+        "refreshMaster\n\t\t\t manualBalanceChange [First] [Last] [Balance Change] [Reason]\n\t\t\t gambit [First] [Last]\n\t\t\t leaderboards\n\t\t\t dupes",
     handler: (message, args) => {
         if (message.channel.id == "678102017226309644") {
             if (args[0] == "new") {
@@ -251,6 +221,9 @@ bot.registerCommand({
                         "'s balance"
                 );
             } else if (args[0] == "leaderboards") {
+            } else if (args[0] == "dupes") {
+                removeGhost();
+                return message.reply("Removed broken files. ");
             }
         } else {
             return message.reply("You don't have perms dumbass...");
@@ -285,26 +258,17 @@ var tg = [
 ].map(pic => `https://imgur.com/${pic}.gif`);
 var tgi = Math.floor(Math.random() * tg.length);
 
-bot.client.on("message", message => {
-    if (
-        message.channel.id === cfg.commandchannel ||
-        message.channel.id === cfg.abbchan
-    ) {
-        if (message.content === "PING") {
-            commandchannel.send("PONG");
-        } else if (message.content === "ping") {
-            commandchannel.send("pong");
-        } else if (message.content.toLocaleLowerCase() === "owo") {
-            commandchannel.send("What's this?");
-        }
-    }
-});
-
 bot.client.on("ready", () => {
+    removeGhost();
+
     setInterval(function() {
         updateId();
         addToMaster();
     }, 20000);
+
+    setInterval(function() {
+        removeGhost();
+    }, 300000);
 });
 
 function gameParse(game, meme) {
@@ -514,4 +478,28 @@ async function changeValue(fn, ln, monies, reason, note) {
         }
     };
     let response2 = await gsapi.spreadsheets.values.update(totalOptions);
+}
+
+async function removeGhost() {
+    gdapi.files.list(
+        {
+            pageSize: 1000,
+            fields: "nextPageToken, files(id, name, parents)"
+        },
+        (err, res) => {
+            if (err) return console.log("The API returned an error: " + err);
+            const files = res.data.files;
+            if (files.length) {
+                files.map(file => {
+                    if (!file.name.includes(".") && file.parents == null) {
+                        gdapi.files.delete({
+                            fileId: `${file.id}`
+                        });
+                    }
+                });
+            } else {
+                console.log("No files found.");
+            }
+        }
+    );
 }
