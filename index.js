@@ -221,6 +221,8 @@ bot.registerCommand({
                         "'s balance"
                 );
             } else if (args[0] == "leaderboards") {
+                leaderboards();
+                return message.reply("Printed leaderboards to console");
             } else if (args[0] == "dupes") {
                 removeGhost();
                 return message.reply("Removed broken files. ");
@@ -480,7 +482,7 @@ async function changeValue(fn, ln, monies, reason, note) {
     let response2 = await gsapi.spreadsheets.values.update(totalOptions);
 }
 
-async function removeGhost() {
+function removeGhost() {
     gdapi.files.list(
         {
             pageSize: 1000,
@@ -502,4 +504,30 @@ async function removeGhost() {
             }
         }
     );
+}
+
+async function leaderboards() {
+    const opt = {
+        spreadsheetId: "10T8oLOKDj-C6Y4sGdfjxm-84qxikrKNv5hfByF8Cx-4",
+        range: "Sheet1!A2:B"
+    };
+
+    const values = await gsapi.spreadsheets.values.get(opt);
+
+    values.data.values.sort(function(a, b) {
+        if (parseFloat(a[1]) === parseFloat(b[1])) {
+            return 0;
+        } else {
+            return parseFloat(a[1]) < parseFloat(b[1]) ? 1 : -1;
+        }
+    });
+
+    var msg = "\nLEADERBOARDS:\t\t\tPOINTS:\n";
+    for (var i = 0; i < 10; i++) {
+        msg += values.data.values[i][0];
+        for (var j = 0; j < 4 - values.data.values[i][0].length / 8; j++)
+            msg += "\t";
+        msg += values.data.values[i][1] + "\n";
+    }
+    console.log(msg);
 }
