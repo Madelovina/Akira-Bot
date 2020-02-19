@@ -190,6 +190,7 @@ bot.registerCommand({
                 for (var i = 0; i < fileIdKeys.length; i++) {
                     msg += fileIdKeys[i] + " : " + fileId[fileIdKeys[i]] + "\n";
                 }
+                console.log(msg);
                 return message.reply("Printed IDs to console. ");
             } else if (args[0] == "update") {
                 updateId();
@@ -249,6 +250,7 @@ bot.registerCommand({
                         args[2] +
                         "'s balance"
                 );
+            } else if (args[0] == "leaderboards") {
             }
         } else {
             return message.reply("You don't have perms dumbass...");
@@ -296,6 +298,13 @@ bot.client.on("message", message => {
             commandchannel.send("What's this?");
         }
     }
+});
+
+bot.client.on("ready", () => {
+    setInterval(function() {
+        updateId();
+        addToMaster();
+    }, 20000);
 });
 
 function gameParse(game, meme) {
@@ -459,10 +468,18 @@ async function changeValue(fn, ln, monies, reason, note) {
     let history = await gsapi.spreadsheets.values.get(opt);
     let dataArray = history.data.values;
 
-    const prevFinal =
-        dataArray[dataArray.length - 1][
-            dataArray[dataArray.length - 1].length - 2
-        ];
+    var prevFinal;
+
+    if (dataArray[dataArray.length - 1].length == 4)
+        prevFinal =
+            dataArray[dataArray.length - 1][
+                dataArray[dataArray.length - 1].length - 1
+            ];
+    else
+        prevFinal =
+            dataArray[dataArray.length - 1][
+                dataArray[dataArray.length - 1].length - 2
+            ];
 
     let newMoney;
     if (monies == "/2") {
@@ -473,8 +490,8 @@ async function changeValue(fn, ln, monies, reason, note) {
         newMoney = parseFloat(prevFinal) * 2;
     } else newMoney = parseFloat(prevFinal) + parseFloat(monies);
 
-    monies = Math.floor(parseFloat(monies) + 1);
-    newMoney = Math.floor(parseFloat(newMoney) + 1);
+    monies = Math.round(parseFloat(monies));
+    newMoney = Math.round(parseFloat(newMoney));
 
     dataArray.push([prevFinal, monies, reason, newMoney, note]);
 
