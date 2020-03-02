@@ -8,12 +8,6 @@ var md5 = require("md5");
 const { google } = require("googleapis");
 const keys = require("./keys.json");
 
-let leaklocserver;
-let commandchannel;
-
-let serv;
-let chan;
-
 var fileId = {};
 
 const riotAuth = `?api_key=${secret.riotkey}`;
@@ -134,7 +128,7 @@ bot.registerCommand({
     name: "academy",
     description:
         "new [First] [Last]\n\t\t\t fileId\n\t\t\t update\n\t\t\t share [First] [Last] [Email]\n\t\t\t returnId [First] [Last]\n\t\t\t " +
-        "refreshMaster\n\t\t\t manualBalanceChange [First] [Last] [Balance Change] [Reason]\n\t\t\t gambit [First] [Last]\n\t\t\t leaderboards\n\t\t\t dupes",
+        "refreshMaster\n\t\t\t change [First] [Last] [Balance Change] [Reason] : [Note]\n\t\t\t gambit [First] [Last]\n\t\t\t leaderboards\n\t\t\t dupes",
     handler: (message, args) => {
         if (message.channel.id == "678102017226309644") {
             if (args[0] == "new") {
@@ -166,7 +160,6 @@ bot.registerCommand({
                 updateId();
                 return message.reply("Updated IDs. ");
             } else if (args[0] == "share") {
-                // br0ke
                 shareFile(
                     fileId[`${args[1]} ${args[2]} Accounting Sheet`],
                     args[3]
@@ -183,12 +176,22 @@ bot.registerCommand({
             } else if (args[0] == "refreshMaster") {
                 addToMaster();
                 return message.reply("Refreshed master!");
-            } else if (args[0] == "manualBalanceChange") {
+            } else if (args[0] == "change") {
                 var reason = "";
+                var note = "";
+                var startIndex = 9999;
                 for (var i = 4; i < args.length; i++) {
+                    if (args[i] == ":") {
+                        startIndex = i + 1;
+                        break;
+                    }
                     reason += args[i] + " ";
                 }
-                changeValue(args[1], args[2], args[3], reason, "Manual Update");
+                for (var i = startIndex; i < args.length; i++) {
+                    note += args[i] + " ";
+                }
+
+                changeValue(args[1], args[2], args[3], reason, note);
                 return message.reply(
                     "Balance change of " +
                         args[3] +
@@ -226,6 +229,12 @@ bot.registerCommand({
             } else if (args[0] == "dupes") {
                 removeGhost();
                 return message.reply("Removed broken files. ");
+            } else if (args[0] == "restart") {
+                newCopyy();
+                return message.reply("Done");
+            } else if (args[0] == "restart2") {
+                newSharee();
+                return message.reply("Done");
             }
         } else {
             return message.reply("You don't have perms dumbass...");
@@ -245,7 +254,9 @@ var emoji = [
     "2kwiHO4",
     "ST5KHLz"
 ].map(pic => `https://imgur.com/${pic}.gif`);
+
 var emojii = Math.floor(Math.random() * emoji.length);
+
 var tg = [
     "l3DbXvQ",
     "EY1YCrp",
@@ -261,16 +272,14 @@ var tg = [
 var tgi = Math.floor(Math.random() * tg.length);
 
 bot.client.on("ready", () => {
-    removeGhost();
-
-    setInterval(function() {
-        updateId();
-        addToMaster();
-    }, 20000);
-
-    setInterval(function() {
-        removeGhost();
-    }, 300000);
+    // removeGhost();
+    // setInterval(function() {
+    //     updateId();
+    //     addToMaster();
+    // }, 20000);
+    // setInterval(function() {
+    //     removeGhost();
+    // }, 300000);
 });
 
 function gameParse(game, meme) {
@@ -482,29 +491,35 @@ async function changeValue(fn, ln, monies, reason, note) {
     let response2 = await gsapi.spreadsheets.values.update(totalOptions);
 }
 
-function removeGhost() {
-    gdapi.files.list(
-        {
-            pageSize: 1000,
-            fields: "nextPageToken, files(id, name, parents)"
-        },
-        (err, res) => {
-            if (err) return console.log("The API returned an error: " + err);
-            const files = res.data.files;
-            if (files.length) {
-                files.map(file => {
-                    if (!file.name.includes(".") && file.parents == null) {
-                        gdapi.files.delete({
-                            fileId: `${file.id}`
-                        });
-                    }
-                });
-            } else {
-                console.log("No files found.");
-            }
-        }
-    );
-}
+// function removeGhost() {
+//     gdapi.files.list(
+//         {
+//             pageSize: 1000,
+//             fields: "nextPageToken, files(id, name, parents)"
+//         },
+//         (err, res) => {
+//             if (err) return console.log("The API returned an error: " + err);
+//             const files = res.data.files;
+//             if (files.length) {
+//                 files.map(file => {
+//                     if (
+//                         !file.name.includes(".") ||
+//                         file.name != "Example Accounting Sheet" ||
+//                         file.name != "Master Accounting Sheet" ||
+//                         !file.name.length > 1 ||
+//                         file.parents == null
+//                     ) {
+//                         gdapi.files.delete({
+//                             fileId: `${file.id}`
+//                         });
+//                     }
+//                 });
+//             } else {
+//                 console.log("No files found.");
+//             }
+//         }
+//     );
+// }
 
 async function leaderboards() {
     const opt = {
@@ -530,4 +545,56 @@ async function leaderboards() {
         msg += values.data.values[i][1] + "\n";
     }
     console.log(msg);
+}
+
+// async function newCopyy() {
+//     const opt = {
+//         spreadsheetId: "10T8oLOKDj-C6Y4sGdfjxm-84qxikrKNv5hfByF8Cx-4",
+//         range: "Sheet1!A2:D"
+//     };
+
+//     const values = await gsapi.spreadsheets.values.get(opt);
+//     let dataArray = values.data.values;
+
+//     for (var i = 0; i < dataArray.length; i++) {
+//         if (dataArray[i][3] == 1) {
+//             var name = dataArray[i][0].trim();
+//             var fileName = `${name} Accounting Sheet`;
+//             var body = {
+//                 name: `${fileName}`,
+//                 parents: [`${fileId[name.charAt(0)]}`]
+//             };
+//             let ph = await gdapi.files.copy({
+//                 fileId: `${fileId["Example Accounting Sheet"]}`,
+//                 resource: body
+//             });
+//         }
+//     }
+// }
+
+async function newSharee() {
+    const opt = {
+        spreadsheetId: "10T8oLOKDj-C6Y4sGdfjxm-84qxikrKNv5hfByF8Cx-4",
+        range: "Sheet1!A76:D"
+    };
+
+    const values = await gsapi.spreadsheets.values.get(opt);
+    let dataArray = values.data.values;
+
+    for (var i = 0; i < dataArray.length; i++) {
+        if (dataArray[i][3] == 1) {
+            var name = dataArray[i][0].trim();
+            var fileName = `${name} Accounting Sheet`;
+            var email = dataArray[i][2];
+
+            let ph2 = await gdapi.permissions.create({
+                fileId: `${fileId[fileName]}`,
+                resource: {
+                    role: "reader",
+                    type: "user",
+                    emailAddress: email
+                }
+            });
+        }
+    }
 }
