@@ -127,8 +127,9 @@ bot.registerCommand({
 bot.registerCommand({
     name: "academy",
     description:
-        "new [First] [Last]\n\t\t\t fileId\n\t\t\t update\n\t\t\t share [First] [Last] [Email]\n\t\t\t returnId [First] [Last]\n\t\t\t " +
-        "refreshMaster\n\t\t\t change [First] [Last] [Balance Change] [Reason] : [Note]\n\t\t\t gambit [First] [Last]\n\t\t\t leaderboards\n\t\t\t dupes",
+        "new [First] [Last]\n\t\t\t share [First] [Last] [Email]\n\t\t\t returnId [First] [Last]" +
+        "\n\t\t\t change [First] [Last] [Balance Change] [Reason] : [Note]\n\t\t\t gambit [First] [Last]\n\t\t\t leaderboards" +
+        "\n\n\t\t\t STAY AWAY FROM THESE:\n\t\t\t dupes\n\t\t\t fileId\n\t\t\t update\n\t\t\t refreshMaster\n\t\t\t restart\n\t\t\t restart2",
     handler: (message, args) => {
         if (message.channel.id == "678102017226309644") {
             if (args[0] == "new") {
@@ -212,7 +213,8 @@ bot.registerCommand({
                     args[2],
                     money,
                     "Gambit",
-                    "hash: " + md5(roll)
+                    // "hash: " + md5(roll)
+                    ""
                 );
                 return message.reply(
                     "Gambit resulted in a change of " +
