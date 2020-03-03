@@ -192,6 +192,9 @@ bot.registerCommand({
                     note += args[i] + " ";
                 }
 
+                reason = reason.trim();
+                note = note.trim();
+
                 changeValue(args[1], args[2], args[3], reason, note);
                 return message.reply(
                     "Balance change of " +
