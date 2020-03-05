@@ -129,7 +129,7 @@ bot.registerCommand({
     description:
         "new [First] [Last]\n\t\t\t share [First] [Last] [Email]\n\t\t\t returnId [First] [Last]" +
         "\n\t\t\t change [First] [Last] [Balance Change] [Reason] : [Note]\n\t\t\t gambit [First] [Last]\n\t\t\t leaderboards" +
-        "\n\n\t\t\t STAY AWAY FROM THESE:\n\t\t\t dupes\n\t\t\t fileId\n\t\t\t update\n\t\t\t refreshMaster\n\t\t\t restart\n\t\t\t restart2",
+        "\n\n\t\t\t STAY AWAY FROM THESE:\n\t\t\t dupes\n\t\t\t fileId\n\t\t\t update\n\t\t\t refreshMaster\n\t\t\t restart\n\t\t\t restart2\n\t\t\t restart3",
     handler: (message, args) => {
         if (message.channel.id == "678102017226309644") {
             if (args[0] == "new") {
@@ -239,6 +239,9 @@ bot.registerCommand({
                 return message.reply("Done");
             } else if (args[0] == "restart2") {
                 newSharee();
+                return message.reply("Done");
+            } else if (args[0] == "restart3") {
+                fixA2();
                 return message.reply("Done");
             }
         } else {
@@ -484,16 +487,6 @@ async function changeValue(fn, ln, monies, reason, note) {
         }
     };
     let response = await gsapi.spreadsheets.values.update(updateOptions);
-
-    const totalOptions = {
-        spreadsheetId: sheetId,
-        range: "Sheet1!A2:A2",
-        valueInputOption: "USER_ENTERED",
-        resource: {
-            values: [[newMoney]]
-        }
-    };
-    let response2 = await gsapi.spreadsheets.values.update(totalOptions);
 }
 
 // function removeGhost() {
@@ -601,5 +594,30 @@ async function newSharee() {
                 }
             });
         }
+    }
+}
+
+async function fixA2() {
+    const opt = {
+        spreadsheetId: "10T8oLOKDj-C6Y4sGdfjxm-84qxikrKNv5hfByF8Cx-4",
+        range: "Sheet1!A47:A75"
+    };
+
+    const values = await gsapi.spreadsheets.values.get(opt);
+    let dataArray = values.data.values;
+
+    for (var i = 0; i < dataArray.length; i++) {
+        var name = dataArray[i][0].trim();
+        var fileName = `${name} Accounting Sheet`;
+        console.log(fileName);
+        const totalOptions = {
+            spreadsheetId: `${fileId[fileName]}`,
+            range: "Sheet1!A2:A2",
+            valueInputOption: "USER_ENTERED",
+            resource: {
+                values: [["=INDEX(F:F,COUNTA(F:F),1)"]]
+            }
+        };
+        let response2 = await gsapi.spreadsheets.values.update(totalOptions);
     }
 }
