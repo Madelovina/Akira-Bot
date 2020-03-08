@@ -216,8 +216,7 @@ bot.registerCommand({
                     args[2],
                     money,
                     "Gambit",
-                    // "hash: " + md5(roll)
-                    ""
+                    "hash: " + md5(roll)
                 );
                 return message.reply(
                     "Gambit resulted in a change of " +
