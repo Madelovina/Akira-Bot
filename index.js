@@ -535,14 +535,18 @@ async function leaderboards() {
         }
     });
 
+    var ind = -1;
+
     var msg = "\nLEADERBOARDS:\t\t\tPOINTS:\n";
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 12; i++) {
         msg += values.data.values[i][0];
+        if (values.data.values[i][0].trim() == "Justin Chang") ind = i + 1;
         for (var j = 0; j < 4 - values.data.values[i][0].length / 8; j++)
             msg += "\t";
         msg += values.data.values[i][1] + "\n";
     }
     console.log(msg);
+    console.log("Me " + ind);
 }
 
 // async function newCopyy() {
