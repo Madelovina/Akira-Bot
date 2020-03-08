@@ -540,11 +540,14 @@ async function leaderboards() {
     var msg = "\nLEADERBOARDS:\t\t\tPOINTS:\n";
     for (var i = 0; i < 12; i++) {
         msg += values.data.values[i][0];
-        if (values.data.values[i][0].trim() == "Justin Chang") ind = i + 1;
         for (var j = 0; j < 4 - values.data.values[i][0].length / 8; j++)
             msg += "\t";
         msg += values.data.values[i][1] + "\n";
     }
+
+    for (var i = 0; i < values.data.values.length; i++)
+        if (values.data.values[i][0] == "Justin Chang") ind = i + 1;
+
     console.log(msg);
     console.log("Me " + ind);
 }
