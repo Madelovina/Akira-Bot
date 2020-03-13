@@ -207,9 +207,9 @@ bot.registerCommand({
             } else if (args[0] == "gambit") {
                 const roll = Math.floor(Math.random() * 1000000000000);
                 let money = "";
-                if (roll <= 99999999999) money = "*2";
-                else if (roll <= 249999999999) money = "2500";
-                else if (roll <= 499999999999) money = "1000";
+                if (roll <= 149999999999) money = "*2";
+                else if (roll <= 349999999999) money = "2500";
+                else if (roll <= 599999999999) money = "1000";
                 else money = "/2";
                 changeValue(
                     args[1],
