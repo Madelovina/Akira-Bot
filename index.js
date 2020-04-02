@@ -652,7 +652,7 @@ bot.client.on("message", message => {
         try {
             var link = message.embeds[0].image.url;
             if (
-                link.includes("PokecordSpawn") ||
+                link.includes("PokecordSpawn") &&
                 !message.content.includes("You caught a level")
             ) {
                 var xmlHttp = new XMLHttpRequest();
