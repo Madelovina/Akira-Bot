@@ -8,6 +8,8 @@ var md5 = require("md5");
 const { google } = require("googleapis");
 const keys = require("./keys.json");
 
+let pokemonGO = true;
+
 var fileId = {};
 
 const riotAuth = `?api_key=${secret.riotkey}`;
@@ -283,7 +285,7 @@ bot.client.on("ready", () => {
     let chan = serv.channels.get("695037144418222162");
 
     setInterval(function() {
-        chan.send("lelxd ppebtw");
+        if (pokemonGO) chan.send("lelxd ppebtw");
     }, 2000);
 });
 
@@ -625,3 +627,19 @@ async function fixA2() {
         let response2 = await gsapi.spreadsheets.values.update(totalOptions);
     }
 }
+
+bot.client.on("message", message => {
+    if (
+        message.channel.id == "695037144418222162" &&
+        message.author.id == "211685429936783360" &&
+        message.content == "go"
+    )
+        go = true;
+    if (message.author.id == "365975655608745985")
+        try {
+            var link = message.embeds[0].image.url;
+            if (link.includes("PokecordSpawn")) go = false;
+        } catch (e) {
+            console.log("bug");
+        }
+});
