@@ -38,7 +38,8 @@ var removes = [
     "and",
     "sword",
     "shield",
-    "pokémon "
+    "pokémon",
+    "go"
 ];
 
 const gsapi = google.sheets({ version: "v4", auth: client });
