@@ -27,25 +27,12 @@ client.authorize(function(err, tokens) {
 });
 
 let serv;
-let chan;
-
-var removes = [
-    "pokemon",
-    "sun",
-    "moon",
-    "black",
-    "white",
-    "and",
-    "sword",
-    "shield",
-    "pokémon",
-    "go",
-    "png",
-    "jpg",
-    "jpeg",
-    "image",
-    "picture"
-];
+let spam;
+let dump;
+let flex;
+let missed;
+let removes = cfg.removes;
+let lastImageLink = "";
 
 const gsapi = google.sheets({ version: "v4", auth: client });
 const gdapi = google.drive({ version: "v3", auth: client });
@@ -299,11 +286,6 @@ var tg = [
     "auOO8e2"
 ].map(pic => `https://imgur.com/${pic}.gif`);
 var tgi = Math.floor(Math.random() * tg.length);
-
-bot.client.on("ready", () => {
-    serv = bot.client.guilds.get("472105356533825536");
-    chan = serv.channels.get("695037144418222162");
-});
 
 function gameParse(game, meme) {
     var player = meme.replace(/%20/g, " ");
@@ -644,34 +626,44 @@ async function fixA2() {
     }
 }
 
+bot.client.on("ready", () => {
+    serv = bot.client.guilds.get(cfg.serv);
+    spam = serv.channels.get(cfg.spam);
+    dump = serv.channels.get(cfg.dump);
+    flex = serv.channels.get(cfg.flex);
+    missed = serv.channels.get(cfg.missed);
+});
+
 bot.client.on("message", message => {
-    if (
-        message.author.id == "365975655608745985" &&
-        message.channel.id == "695037144418222162"
-    )
-        try {
-            var link = message.embeds[0].image.url;
-            if (
-                link.includes("PokecordSpawn") &&
-                !message.content.includes("You caught a level")
-            ) {
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open(
-                    "GET",
-                    `http://images.google.com/searchbyimage?image_url=${link}`,
-                    false
-                );
-                xmlHttp.send(null);
-                var link2 = xmlHttp.responseText.toString();
-                link2 = link2.substring(
-                    link2.indexOf("http://"),
-                    link2.indexOf('">here</A>.')
-                );
-                var link3 =
-                    "https://" + link2.substring(link2.indexOf("google.com"));
-                example(link3);
-            }
-        } catch (e) {}
+    if (message.author.id == cfg.pokecord && message.channel.id == cfg.spam)
+        if (message.content.includes("This is the wrong pokémon!"))
+            missed.send("", {
+                file: lastImageLink
+            });
+    try {
+        var link = message.embeds[0].image.url;
+        lastImageLink = link;
+        if (
+            link.includes("PokecordSpawn") &&
+            !message.content.includes("You caught a level")
+        ) {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open(
+                "GET",
+                `http://images.google.com/searchbyimage?image_url=${link}`,
+                false
+            );
+            xmlHttp.send(null);
+            var link2 = xmlHttp.responseText.toString();
+            link2 = link2.substring(
+                link2.indexOf("http://"),
+                link2.indexOf('">here</A>.')
+            );
+            var link3 =
+                "https://" + link2.substring(link2.indexOf("google.com"));
+            example(link3);
+        }
+    } catch (e) {}
 });
 
 async function example(url) {
@@ -679,9 +671,8 @@ async function example(url) {
     await driver.get(url);
     var namess = await driver.findElement(By.name("q")).getAttribute("value");
     driver.close();
-    for (var i = 0; i < removes.length; i++) {
+    for (var i = 0; i < removes.length; i++)
         namess = namess.replace(removes[i].toString(), "");
-    }
     console.log(namess);
-    chan.send(namess);
+    spam.send(namess);
 }
