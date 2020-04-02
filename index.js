@@ -3,6 +3,7 @@ const { Bot } = require("./adb/index");
 const cfg = require("./config.json");
 const secret = require("./secret.json");
 const bot = new Bot("a!");
+const { Builder, By } = require("selenium-webdriver");
 
 var md5 = require("md5");
 const { google } = require("googleapis");
@@ -630,18 +631,36 @@ async function fixA2() {
 
 bot.client.on("message", message => {
     if (
-        message.channel.id == "695037144418222162" &&
-        message.author.id == "211685429936783360" &&
-        message.content == "go"
-    ) {
-        console.log("go");
-        pokemonGO = true;
-    }
-    if (message.author.id == "365975655608745985")
+        message.author.id == "365975655608745985" &&
+        message.channel.id == "695037144418222162"
+    )
         try {
             var link = message.embeds[0].image.url;
-            if (link.includes("PokecordSpawn")) pokemonGO = false;
-        } catch (e) {
-            console.log("bug");
-        }
+            if (link.includes("PokecordSpawn")) {
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.open(
+                    "GET",
+                    `http://images.google.com/searchbyimage?image_url=${link}`,
+                    false
+                );
+                xmlHttp.send(null);
+                var link2 = xmlHttp.responseText.toString();
+                link2 = link2.substring(
+                    link2.indexOf("http://"),
+                    link2.indexOf('">here</A>.')
+                );
+                var link3 =
+                    "https://" + link2.substring(link2.indexOf("google.com"));
+                example(link3);
+            }
+        } catch (e) {}
 });
+
+async function example(url) {
+    let driver = await new Builder().forBrowser("chrome").build();
+    await driver.get(url);
+    var namess = await driver.findElement(By.name("q")).getAttribute("value");
+    driver.close();
+    namess = namess.replace("pokemon", "");
+    chan.send(namess);
+}
