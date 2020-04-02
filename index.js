@@ -29,6 +29,18 @@ client.authorize(function(err, tokens) {
 let serv;
 let chan;
 
+var removes = [
+    "pokemon",
+    "sun",
+    "moon",
+    "black",
+    "white",
+    "and",
+    "sword",
+    "shield",
+    "pokémon "
+];
+
 const gsapi = google.sheets({ version: "v4", auth: client });
 const gdapi = google.drive({ version: "v3", auth: client });
 
@@ -658,6 +670,9 @@ async function example(url) {
     await driver.get(url);
     var namess = await driver.findElement(By.name("q")).getAttribute("value");
     driver.close();
-    namess = namess.replace("pokemon", "");
+    for (var i = 0; i < removes.length; i++) {
+        namess = namess.replace(removes[i].toString(), "");
+    }
+    console.log(namess);
     chan.send(namess);
 }
