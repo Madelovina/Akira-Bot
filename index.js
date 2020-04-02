@@ -26,6 +26,9 @@ client.authorize(function(err, tokens) {
     }
 });
 
+let serv;
+let chan;
+
 const gsapi = google.sheets({ version: "v4", auth: client });
 const gdapi = google.drive({ version: "v3", auth: client });
 
@@ -280,8 +283,8 @@ var tg = [
 var tgi = Math.floor(Math.random() * tg.length);
 
 bot.client.on("ready", () => {
-    let serv = bot.client.guilds.get("472105356533825536");
-    let chan = serv.channels.get("695037144418222162");
+    serv = bot.client.guilds.get("472105356533825536");
+    chan = serv.channels.get("695037144418222162");
 });
 
 function gameParse(game, meme) {
