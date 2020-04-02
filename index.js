@@ -633,8 +633,10 @@ bot.client.on("message", message => {
         message.channel.id == "695037144418222162" &&
         message.author.id == "211685429936783360" &&
         message.content == "go"
-    )
+    ) {
+        console.log("go");
         go = true;
+    }
     if (message.author.id == "365975655608745985")
         try {
             var link = message.embeds[0].image.url;
