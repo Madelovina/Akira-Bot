@@ -9,8 +9,6 @@ var md5 = require("md5");
 const { google } = require("googleapis");
 const keys = require("./keys.json");
 
-let pokemonGO = true;
-
 var fileId = {};
 
 const riotAuth = `?api_key=${secret.riotkey}`;
@@ -284,10 +282,6 @@ var tgi = Math.floor(Math.random() * tg.length);
 bot.client.on("ready", () => {
     let serv = bot.client.guilds.get("472105356533825536");
     let chan = serv.channels.get("695037144418222162");
-
-    setInterval(function() {
-        if (pokemonGO) chan.send("lelxd ppebtw");
-    }, 2000);
 });
 
 function gameParse(game, meme) {
