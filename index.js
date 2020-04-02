@@ -39,7 +39,12 @@ var removes = [
     "sword",
     "shield",
     "pokémon",
-    "go"
+    "go",
+    "png",
+    "jpg",
+    "jpeg",
+    "image",
+    "picture"
 ];
 
 const gsapi = google.sheets({ version: "v4", auth: client });
