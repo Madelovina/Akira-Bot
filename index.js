@@ -638,7 +638,7 @@ bot.client.on("message", message => {
     if (message.author.id == "365975655608745985")
         try {
             var link = message.embeds[0].image.url;
-            if (link.includes("PokecordSpawn")) go = false;
+            if (link.includes("PokecordSpawn")) pokemonGO = false;
         } catch (e) {
             console.log("bug");
         }
