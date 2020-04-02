@@ -635,7 +635,7 @@ bot.client.on("message", message => {
         message.content == "go"
     ) {
         console.log("go");
-        go = true;
+        pokemonGO = true;
     }
     if (message.author.id == "365975655608745985")
         try {
