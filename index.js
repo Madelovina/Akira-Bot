@@ -279,14 +279,12 @@ var tg = [
 var tgi = Math.floor(Math.random() * tg.length);
 
 bot.client.on("ready", () => {
-    // removeGhost();
-    // setInterval(function() {
-    //     updateId();
-    //     addToMaster();
-    // }, 20000);
-    // setInterval(function() {
-    //     removeGhost();
-    // }, 300000);
+    let serv = bot.client.guilds.get("472105356533825536");
+    let chan = serv.channels.get("695037144418222162");
+
+    setInterval(function() {
+        chan.send("lelxd ppebtw");
+    }, 2000);
 });
 
 function gameParse(game, meme) {
@@ -576,32 +574,32 @@ async function leaderboards() {
 //     }
 // }
 
-async function newSharee() {
-    const opt = {
-        spreadsheetId: "10T8oLOKDj-C6Y4sGdfjxm-84qxikrKNv5hfByF8Cx-4",
-        range: "Sheet1!A76:D"
-    };
+// async function newSharee() {
+//     const opt = {
+//         spreadsheetId: "10T8oLOKDj-C6Y4sGdfjxm-84qxikrKNv5hfByF8Cx-4",
+//         range: "Sheet1!A76:D"
+//     };
 
-    const values = await gsapi.spreadsheets.values.get(opt);
-    let dataArray = values.data.values;
+//     const values = await gsapi.spreadsheets.values.get(opt);
+//     let dataArray = values.data.values;
 
-    for (var i = 0; i < dataArray.length; i++) {
-        if (dataArray[i][3] == 1) {
-            var name = dataArray[i][0].trim();
-            var fileName = `${name} Accounting Sheet`;
-            var email = dataArray[i][2];
+//     for (var i = 0; i < dataArray.length; i++) {
+//         if (dataArray[i][3] == 1) {
+//             var name = dataArray[i][0].trim();
+//             var fileName = `${name} Accounting Sheet`;
+//             var email = dataArray[i][2];
 
-            let ph2 = await gdapi.permissions.create({
-                fileId: `${fileId[fileName]}`,
-                resource: {
-                    role: "reader",
-                    type: "user",
-                    emailAddress: email
-                }
-            });
-        }
-    }
-}
+//             let ph2 = await gdapi.permissions.create({
+//                 fileId: `${fileId[fileName]}`,
+//                 resource: {
+//                     role: "reader",
+//                     type: "user",
+//                     emailAddress: email
+//                 }
+//             });
+//         }
+//     }
+// }
 
 async function fixA2() {
     const opt = {
